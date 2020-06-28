@@ -39,6 +39,11 @@ public class BundleController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public ResponseEntity testApi() {
+        return new ResponseEntity<>("i'm working " , HttpStatus.OK);
+    }
+
     @DeleteMapping()
     public ResponseEntity deleteBundles() {
         bundleService.deleteBundles();
