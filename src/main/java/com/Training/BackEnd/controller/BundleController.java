@@ -4,7 +4,6 @@ import com.Training.BackEnd.dto.BundleRequestDto;
 import com.Training.BackEnd.dto.BundleResponseDto;
 import com.Training.BackEnd.service.BundleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("bundles")
-@Scope("prototype")
 public class BundleController {
 
     @Autowired
@@ -47,21 +45,9 @@ public class BundleController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/soap")
-    public ResponseEntity<Object> addBundleSoap(@RequestBody final BundleRequestDto bundleRequestDto) {
-        bundleService.provisionBundle(bundleRequestDto);
+    @GetMapping("/{id}/provision")
+    public ResponseEntity<Object> bundleProvision(@PathVariable("id") int id) {
+        bundleService.provisionBundle(id);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/produce")
-    public ResponseEntity<Object> produceBundle(@RequestBody BundleRequestDto bundleDto) {
-        bundleService.produceBundle(bundleDto);
-        return new ResponseEntity<>("bundle added to the queue", HttpStatus.OK);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/consume")
-    public ResponseEntity<Object> consumeBundles() throws InterruptedException {
-        bundleService.consumeBundles();
-        return new ResponseEntity<>("bundles consumed successfully ", HttpStatus.OK);
     }
 }

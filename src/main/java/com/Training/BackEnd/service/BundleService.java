@@ -1,14 +1,12 @@
 package com.Training.BackEnd.service;
 
+import com.Training.BackEnd.Soap.SoapClient;
 import com.Training.BackEnd.GlobalVariables;
 import com.Training.BackEnd.dao.BundleDao;
 import com.Training.BackEnd.dto.BundleRequestDto;
 import com.Training.BackEnd.dto.BundleResponseDto;
 import com.Training.BackEnd.repository.BundleRepository;
-import com.Training.BackEnd.runnable.Consumer;
-import com.Training.BackEnd.soap.SoapClient;
-import com.Training.BackEnd.wsdl.AddBundleResponse;
-import com.Training.BackEnd.wsdl.BundleDtoSoap;
+import com.Training.BackEnd.wsdl.BundleSoap;
 import org.apache.commons.lang3.time.DateUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,7 @@ public class BundleService {
     BundleRepository bundleRepository;
     @Autowired
     SoapClient soapClient;
+
     String pattern = "yyyy-MM-dd";
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
@@ -59,23 +58,10 @@ public class BundleService {
         bundleRepository.deleteAll();
     }
 
-    public void consumeBundles() {
-        Thread ConsumingThreads[] = new Thread[1];
-        for (int j = 0; j < ConsumingThreads.length; j++) {
-            ConsumingThreads[j] = new Thread(new Consumer(this));
-            ConsumingThreads[j].start();
-        }
-    }
-
-
-    public AddBundleResponse provisionBundle(BundleRequestDto bundleDto) {
-        BundleDtoSoap bundleDtoSoap = DtoRequestToSoapDto(bundleDto);
-        AddBundleResponse response = soapClient.addBundlesSoap(bundleDtoSoap);
-        return response;
-    }
-
-    public void produceBundle(BundleRequestDto bundleDto) {
-        bundlesContainer.add(bundleDto);
+    public void provisionBundle(int id) {
+        BundleDao bundleDao = bundleRepository.findOne(id);
+        BundleSoap bundleSoap = DaoToSoap(bundleDao);
+        soapClient.addBundlesSoap(bundleSoap);
     }
 
     private BundleDao RequestDtoToDao(BundleRequestDto bundleDto) {
@@ -93,10 +79,10 @@ public class BundleService {
         return bundleDto;
     }
 
-    private BundleDtoSoap DtoRequestToSoapDto(BundleRequestDto bundleRequestDto) {
+    private BundleSoap DaoToSoap(BundleDao bundleDao) {
         ModelMapper modelMapper = new ModelMapper();
-        BundleDtoSoap bundleDtoSoap = modelMapper.map(bundleRequestDto, BundleDtoSoap.class);
-        return bundleDtoSoap;
+        BundleSoap bundleSoap = modelMapper.map(bundleDao, BundleSoap.class);
+        return bundleSoap;
     }
 
     /*

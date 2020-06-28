@@ -1,7 +1,7 @@
 package com.Training.BackEnd.config;
 
 import com.Training.BackEnd.Constants;
-import com.Training.BackEnd.soap.SoapClient;
+import com.Training.BackEnd.Soap.SoapClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
