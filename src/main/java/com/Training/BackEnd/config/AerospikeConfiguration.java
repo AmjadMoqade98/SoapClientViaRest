@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableAerospikeRepositories(basePackages = "com.Training.BackEnd.repository")
 public class AerospikeConfiguration {
+    final static String serverIp = "172.18.0.5";
+    final static int serverPort = 3000;
 
     @Bean
     public AerospikeTemplate aerospikeTemplate() {
@@ -22,6 +24,6 @@ public class AerospikeConfiguration {
     public AerospikeClient aerospikeClient() {
         ClientPolicy clientPolicy = new ClientPolicy();
         clientPolicy.failIfNotConnected = true;
-        return new AerospikeClient(clientPolicy, "172.18.0.4", 3000);
+        return new AerospikeClient(clientPolicy, serverIp, serverPort);
     }
 }
